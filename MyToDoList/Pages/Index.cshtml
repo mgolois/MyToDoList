@@ -55,42 +55,169 @@
     </a>
 </div>
 
-<div class="row">
-    <div class="col-md-3">
-        <h2>Application uses</h2>
-        <ul>
-            <li>Sample pages using ASP.NET Core Razor Pages</li>
-            <li>Theming using <a href="https://go.microsoft.com/fwlink/?LinkID=398939">Bootstrap</a></li>
-        </ul>
+<div class="col-md-12">
+
+    <div class="panel panel-default" style="margin-top: 15px;">
+        <div class="panel-body">
+            <form class="form-inline" method="post">
+                <div class="form-group col-md-7">
+                    <label for="title">New Task Name</label>
+                    <input type="text" class="form-control" name="title" id="title" />
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="assignedBy">Assigned By</label>
+                    <select class="form-control" id="assignedBy" name="assignedBy">
+                        <option></option>
+                        <option>Srinivas</option>
+                        <option>Anita</option>
+                        <option>Clissod</option>
+                        <option>Sheldon</option>
+                        <option>Golois</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <button type="submit" id="submitTodoBtn" class="btn btn-success" style="margin-top:22px;">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> Add
+                </button>
+            </form>
+        </div>
     </div>
-    <div class="col-md-3">
-        <h2>How to</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?linkid=852130">Working with Razor Pages.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699315">Manage User Secrets using Secret Manager.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699316">Use logging to log a message.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699317">Add packages using NuGet.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699319">Target development, staging or production environment.</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Overview</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=518008">Conceptual overview of what is ASP.NET Core</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699320">Fundamentals of ASP.NET Core such as Startup and middleware.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398602">Working with Data</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398603">Security</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699321">Client side development</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699322">Develop on different platforms</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699323">Read more on the documentation site</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Run &amp; Deploy</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure App Service</a></li>
-        </ul>
-    </div>
+    @*<h3>My ToDo Lists</h3>*@
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Task</th>
+                <th class="text-center">By</th>
+                <th class="text-center">Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.MyToDoItems)
+            {
+                <tr>
+                    <td class="text-center">
+                        <a data-toggle="modal" data-target="#myModal@(item.Id)" href="#">#@item.Id</a>
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal@(item.Id)" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title">Updating Task</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="form-horizontal" method="post" asp-page-handler="UpdateItem">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <div class="form-group">
+                                                <label for="title" class="col-sm-3 control-label">Title</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" class="form-control" name="title" value="@item.Title" id="title">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="title" class="col-sm-3 control-label">Description</label>
+                                                <div class="col-sm-9">
+                                                    <textarea rows="5" name="description" class="form-control">@item.Description</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">Priority</label>
+                                                <div class="col-sm-9">
+                                                    <input type="range" name="priority" class="form-control" value="@item.Priority" min="0" max="10">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">Assigned By</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" name="assignedBy" class="form-control" value="@item.AssignedBy">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">Assigned To</label>
+                                                <div class="col-sm-9">
+                                                    <input type="text" name="assignedTo" class="form-control" value="@item.AssignedTo">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">Created Date</label>
+                                                <div class="col-sm-9">
+                                                    <input type="date" name="createdDate" class="form-control" value="@item.CreatedDate.ToString("yyyy-MM-dd")">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">Start Date</label>
+                                                <div class="col-sm-9">
+                                                    <input type="date" name="startedDate" class="form-control" value="@item.StartedDate?.ToString("yyyy-MM-dd")">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">Complete Date</label>
+                                                <div class="col-sm-9">
+                                                    <input type="date" name="completedDate" class="form-control" value="@item.CompletedDate?.ToString("yyyy-MM-dd")">
+                                                </div>
+                                            </div>
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td> @item.Title</td>
+                    <td class="text-center">@item.AssignedBy</td>
+                    <td class="text-center">@item.CreatedDate.ToShortDateString()</td>
+                    <td class="text-center">
+                        <a data-toggle="modal" data-target="#myModal@(item.Id)" href="#" style="margin-left:5px"><span class="glyphicon glyphicon-pencil"></span> </a>
+                        <a asp-page-handler="delete" asp-route-id="@item.Id"><span class="glyphicon glyphicon-trash text-danger"></span></a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+
 </div>
+
+@section Styles {
+    <style type="text/css">
+        .form-control {
+            width: 85% !important;
+        }
+    </style>
+}
+@*@section Scripts {
+        <script type="text/javascript">
+            $(document).ready(function(){
+
+                $('#submitTodoBtn').click(function () {
+
+                    var todoItem = {
+                        'title': $('#title').val(),
+                        'assignedBy': $('#assignedBy').val()
+                    };
+
+                    $.post('/', todoItem, function (data) {
+                        console.log(data);
+                        toastr.success('Item successfully saved');
+                        clearInputs();
+                    }).fail(function (data) {
+                        toastr.error('Error occurred while submitting your item');
+                    });
+                });
+
+                function clearInputs() {
+                    $('#title').val('');
+                    $('#assignedBy').val('');
+
+                }
+            });
+        </script>
+    }*@

@@ -11,15 +11,15 @@ namespace MyToDoList.Pages
     public class IndexModel : PageModel
     {
         public List<ToDoItem> MyToDoItems { get; set; }
-        private readonly ToDoDbContext toDoDbContext;
+        private readonly IDbFactory db;
 
-        public IndexModel(ToDoDbContext context)
+        public IndexModel(IDbFactory context)
         {
-            toDoDbContext = context;
+            db = context;
         }
         public void OnGet()
         {
-            MyToDoItems = toDoDbContext.ToDoItems.ToList();
+            MyToDoItems = db.Context.ToDoItems.ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(ToDoItem item)
@@ -30,20 +30,20 @@ namespace MyToDoList.Pages
             item.AssignedTo = "Golois";
             item.CreatedDate = DateTime.Now;
 
-            toDoDbContext.ToDoItems.Add(item);
-            await toDoDbContext.SaveChangesAsync();
+            db.Context.ToDoItems.Add(item);
+            await db.Context.SaveChangesAsync();
 
             return RedirectToPage("/Index");
         }
 
         public async Task<IActionResult> OnGetDeleteAsync(int id)
         {
-            var item = await toDoDbContext.ToDoItems.FindAsync(id);
+            var item = await db.Context.ToDoItems.FindAsync(id);
 
             if(item != null)
             {
-                toDoDbContext.ToDoItems.Remove(item);
-                await toDoDbContext.SaveChangesAsync();
+                db.Context.ToDoItems.Remove(item);
+                await db.Context.SaveChangesAsync();
             }
             return RedirectToPage("/Index");
         }
@@ -53,8 +53,8 @@ namespace MyToDoList.Pages
             if (!ModelState.IsValid)
                 return Page();
 
-            toDoDbContext.ToDoItems.Update(item);
-            await toDoDbContext.SaveChangesAsync();
+            db.Context.ToDoItems.Update(item);
+            await db.Context.SaveChangesAsync();
 
             return RedirectToPage("/Index");
         }

@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+//using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Services.AppAuthentication;
+//using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,13 +36,23 @@ namespace MyToDoList
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddEntityFrameworkSqlServer().AddDbContext<ToDoDbContext>(options =>
+            services.AddScoped<IDbFactory, DbFactory>();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddDbContext<ToDoDbContext>(options =>
             {
-                var connStr = Configuration["ToDoDbConntectionString"];
-                options.UseSqlServer(connStr);
+                var connStr = Configuration["ConnectionString"];
+                var conn = new SqlConnection(connStr);
+                //conn.AccessToken = (new AzureServiceTokenProvider()).GetAccessTokenAsync("https://database.windows.net/").Result;
+                options.UseSqlServer(conn);
             });
+
+            //services.AddEntityFrameworkSqlServer().AddDbContext<ToDoDbContext>(options =>
+            //{
+            //    var connStr = Configuration["ToDoDbConntectionString"];
+            //    options.UseSqlServer(connStr);
+            //});
+
+           //services.AddScoped<IAuthenticatedContext, AuthenticatedContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

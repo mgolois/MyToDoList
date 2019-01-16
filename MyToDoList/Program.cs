@@ -22,12 +22,13 @@ namespace MyToDoList
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseApplicationInsights()
             .ConfigureAppConfiguration(builder =>
             {
-                var azureServiceTokenProvider = new AzureServiceTokenProvider();
-                var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
-                builder.AddAzureKeyVault("https://mytodo.vault.azure.net/", keyVaultClient, new DefaultKeyVaultSecretManager());
-
+                var build = builder.Build();
+                //var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                //var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
+                //builder.AddAzureKeyVault(build["AzureKeyVaulturl"], keyVaultClient, new DefaultKeyVaultSecretManager());
             })
             .UseStartup<Startup>();
     }
